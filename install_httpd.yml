@@ -2,9 +2,16 @@
 - hosts: all
   become: true
   tasks:
-  - name: update repository
+  - name: Install Httpd and php and update repository
     yum:
+     name: 
+     - httpd
+     - php
      update_cache: yes
-  - name: Install Httpd
-    yum:
-     name: httpd
+     state: latest  
+    when: ansible_distribution == "Amazon"
+  - name: add php support for apache for ubuntu
+    apt:
+     name: libapache2-mod-php
+     state: latest  
+    when: ansible_distribution == "Ubuntu"
