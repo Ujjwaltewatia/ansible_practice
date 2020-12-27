@@ -2,6 +2,9 @@
 - hosts: all
   become: true
   tasks:
+  - name: update repository
+    yum:
+     update_cache: yes
   - name: Install Httpd
     yum:
      name: httpd
