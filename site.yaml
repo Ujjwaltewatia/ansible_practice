@@ -3,12 +3,14 @@
   become: true
   tasks:
   - name: Install updates Amazon linux
+    tags: always
     yum:
       update_only: yes
       update_cache: yes
     when: ansible_distribution == "Amazon"
 
   - name: Install update on Ubuntu
+    tags: always
     apt:
      upgrade: dist
      update_cache: yes
@@ -18,13 +20,15 @@
   become: true
   tasks:
   - name: Install apache and Php Ubuntu
+    tags: apache,apache2,ubuntu,php
     apt:
      name: 
      - apache2
      - libapache2-mod-php
     when: ansible_distribution == "Ubuntu"
 
-  - name: Install httpd and php Amzon Linux
+  - name: Install httpd and php Amazon Linux
+    tags: apache,httpd,amazon
     yum:
      name:
      - httpd
@@ -35,12 +39,14 @@
   become: true
   tasks:
   - name: Install mariadb on Amazon Linux
+    tags: mariadb,amazon
     yum:
      name: mariadb
      state: latest
     when: ansible_distribution == "Amazon"
   
   - name: Install mariadb on Ubuntu
+    tags: ubuntu,mariadb
     apt:
      name: mariadb-server
      state: latest
