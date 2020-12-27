@@ -3,15 +3,12 @@
   become: true
   tasks:
   - name: Install Httpd and php and update repository
-    yum:
+    package:
      name: 
-     - httpd
-     - php
+     - "{{ apache_package }}"
+     - "{{ php_package }}"
+     - "{{ mysql_package }}"  
+     state: present
      update_cache: yes
-     state: latest  
-    when: ansible_distribution == "Amazon"
-  - name: add php support for apache for ubuntu
-    apt:
-     name: libapache2-mod-php
-     state: latest  
-    when: ansible_distribution == "Ubuntu"
+       
+    
