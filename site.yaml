@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: workstations
   become: true
   tasks:
   - name: Install updates Amazon linux
@@ -9,54 +9,36 @@
       update_cache: yes
     when: ansible_distribution == "Amazon"
 
-  - name: Install update on Ubuntu
-    tags: always
-    apt:
-     upgrade: dist
-     update_cache: yes
-    when: ansible_distribution == "Ubuntu"
-
-- hosts: test-ec2
+- hosts: db_servers
   become: true
-  tasks:
-  - name: Install apache and Php Ubuntu
-    tags: apache,apache2,ubuntu,php
-    apt:
-     name: 
-     - apache2
-     - libapache2-mod-php
-    when: ansible_distribution == "Ubuntu"
-  - name: Copy default_html for site to server
-    tags: apache,httpd
-    copy:
-     src: default_site.html
-     dest: /var/www/html/index.html
-     owner: root
-     group: root
-     mode: 0644
+  roles:
+  - db_servers
 
-  - name: Install httpd and php Amazon Linux
-    tags: apache,httpd,amazon
-    yum:
-     name:
-     - httpd
-     - php
-    when: ansible_distribution == "Amazon"
-
-- hosts: db_server
+- hosts: file_servers
   become: true
-  tasks:
-  - name: Install mariadb on Amazon Linux
-    tags: mariadb,amazon
-    yum:
-     name: mariadb
-     state: latest
-    when: ansible_distribution == "Amazon"
+  roles:
+  - file_servers
+
+
+- hosts: workstations
+  become: true
+  roles:
+  - workstations
+
+
   
-  - name: Install mariadb on Ubuntu
-    tags: ubuntu,mariadb
-    apt:
-     name: mariadb-server
-     state: latest
-    when: ansible_distribution == "Ubuntu"
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
 

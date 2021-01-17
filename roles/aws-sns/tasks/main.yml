@@ -1,0 +1,6 @@
+---
+- name: Create sns
+  include_tasks: "{{ playbook_dir }}/roles/aws-sns/tasks/_sns_topic.yml"
+  vars:
+    sns_conf: "{{ item }}"
+  loop: "{{ aws_sns }}"

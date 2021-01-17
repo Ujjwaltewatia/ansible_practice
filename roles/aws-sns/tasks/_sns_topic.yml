@@ -1,0 +1,6 @@
+---
+- name: Create sns
+  include_tasks: "{{ playbook_dir }}/roles/aws-sns/tasks/_sns_topic_create.yml"
+  vars:
+    sns_topic: "{{ item.value }}"
+  loop: "{{ sns_conf.topics| dict2items | default({})}}"

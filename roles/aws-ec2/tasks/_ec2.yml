@@ -1,0 +1,11 @@
+- name: Get VPC Info
+  include_tasks: "{{ playbook_dir }}/roles/aws-vpc/tasks/_vpc_info.yml"
+  vars:
+    vpc_name: "{{ ec2_conf.vpc_name }}"
+
+
+- name: Create Ec2 instance'
+  include_tasks: "{{ playbook_dir }}/roles/aws-ec2/tasks/_ec2_instance.yml"
+  vars:
+    ec2_details: "{{ item.value }}"
+  loop: "{{ ec2_conf.instances | default({}) |dict2items }}"

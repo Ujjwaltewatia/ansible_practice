@@ -1,0 +1,7 @@
+
+- name: Ec2 INFO
+  ec2_instance_info:
+    region: "{{ aws_vpc[vpc_name].region}}"
+    filters:
+      "tag:Name": "{{ instance_name }}"
+  register: ec2_info

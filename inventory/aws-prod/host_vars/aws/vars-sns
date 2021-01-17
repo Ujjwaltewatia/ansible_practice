@@ -1,0 +1,22 @@
+aws_sns:
+    - region: us-east-1
+      topics:
+        topic1:
+            display_name: RDS_CPU_utilisation
+            name: rds-cpu-utilisation
+            state: present
+            region: us-east-1
+            tags: {'Name':'rds-cpu-utilisation'}
+            subscriptions:
+                - endpoint: "ujjwaltewatia@gmail.com"
+                  protocol: "email"
+        topic2:
+            display_name: RDS_CPU_utilisation2
+            name: rds-cpu-utilisation2
+            state: absent
+            region: us-east-1
+            tags: {'Name':'rds-cpu-utilisation2'}
+            subscriptions:
+                - endpoint: "ujjwaltewatia@gmail.com"
+                  protocol: "email"
+            

@@ -1,0 +1,108 @@
+#Subnets
+#Internet Gateways
+#Security Groups
+#Network ACLs
+#Egress Only Internet Gateways
+#Route Tables
+#Network Interfaces
+#Peering Connections
+#EndPoints
+
+
+first_vpc_name: my_test_vpc
+first_vpc_igw_name: "{{ first_vpc_name }}_igw"
+
+
+aws_vpc:
+  "my_test_vpc":
+    name: "{{ first_vpc_name }}"
+    region: us-east-1
+    cidr_block: 10.2.0.0/16
+    state: present
+    igw:
+      name: "{{ first_vpc_igw_name }}"
+    subnets:
+      public:
+        - name: "{{ first_vpc_name }}_1a_public"
+          cidr: 10.2.0.0/24
+          az: us-east-1a
+          ngw:
+            name: "{{ first_vpc_igw_name }}_1a_public_ng" 
+        - name: "{{ first_vpc_name }}_1b_public"
+          cidr: 10.2.1.0/24
+          az: us-east-1b
+      private:
+        - name: "{{ first_vpc_name }}_1a_private"
+          cidr: 10.2.2.0/24
+          az: us-east-1a
+        - name: "{{ first_vpc_name }}_1b_private"
+          cidr: 10.2.3.0/24
+          az: us-east-1b
+        - name: "{{ first_vpc_name }}_1c_private"
+          cidr: 10.2.4.0/24
+          az: us-east-1c
+        - name: "{{ first_vpc_name }}_1c_private2"
+          cidr: 10.2.5.0/24
+          az: us-east-1c
+        - name: "{{ first_vpc_name }}_1c_private3"
+          cidr: 10.2.6.0/24
+          az: us-east-1c
+    route_tables:
+      - name: "{{ first_vpc_name }}_rt_public"
+        subnets:
+        - "{{ first_vpc_name }}_1a_public"
+        - "{{ first_vpc_name }}_1b_public"
+        routes:
+        - dest: "0.0.0.0/0"
+          gateway_name: "{{ first_vpc_igw_name }}"
+      - name: "{{ first_vpc_name }}_rt_private"
+        subnets:
+        - "{{ first_vpc_name }}_1a_private"
+        - "{{ first_vpc_name }}_1b_private"
+        - "{{ first_vpc_name }}_1c_private"
+        routes:
+        - dest: "0.0.0.0/0"
+          natgateway_name: "{{ first_vpc_igw_name }}_1a_public_ng"
+    security_groups:
+      egress: []
+      ingress:
+        - name: security_group_web_app
+          description: security group for ssh access
+          rules:
+            - proto: tcp
+              ports: [443]
+              cidr_ips: "{{ aws_whitelisted_cidrs }}"
+              rule_desc: allow all on port 443
+            - proto: tcp
+              ports: [443,80]
+              cidr_ips: ["10.2.0.0/16"]
+              rule_desc: allow vpc on port 443 and 80
+        - name: security_group_ssh
+          description: security group for ssh
+          rules:
+            - proto: tcp
+              ports: [22]
+              cidr_ips: "{{ aws_whitelisted_cidrs }}"
+              rule_desc: allow ssh 
+            - proto: tcp
+              ports: [22]
+              cidr_ips: ["10.2.0.0/16"]
+              rule_desc: allow vpc on port 22
+        - name: postgres_access_sg
+          description: security group for postgres
+          rules:
+            - proto: tcp
+              ports: [5432]
+              cidr_ips: "{{ aws_whitelisted_cidrs }}"
+              rule_desc: allow postgres access
+            - proto: tcp
+              ports: [5432]
+              cidr_ips: ["10.2.0.0/16"]
+              rule_desc: allow postgres access within vpc
+
+
+
+
+
+            
+

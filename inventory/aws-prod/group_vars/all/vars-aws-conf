@@ -1,0 +1,19 @@
+ansible_connection: local
+playbook_dir: /home/utewatia/ansible_practice
+
+aws_ec2_images:
+    us-east-1:
+        amzn2-ami-hvm-2.0.20200904.0-x86_64-gp2: ami-0c94855ba95c71c99
+
+aws_conf:
+    account_id: "166032887324"
+    default_region: us-east-1
+
+aws_whitelisted_cidrs:  [
+    "180.149.227.210/32", # Ujjwal ip address
+    "198.168.25.64/29"  #Vpn ip range
+
+]
+
+aws_default_tags:
+    source: ansible

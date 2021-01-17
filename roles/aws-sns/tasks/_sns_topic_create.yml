@@ -1,0 +1,24 @@
+---
+
+- name: Create SNS Topic
+  sns_topic:
+    name: "{{ sns_topic.name }}"
+    state: "{{ sns_topic.state|default('present') }}"
+    display_name: "{{ sns_topic.display_name }}"
+    subscriptions: "{{ sns_topic.subscriptions | default([]) }}"
+    region: "{{ sns_topic.region }}"
+    policy: "{{ sns_topic.policy| default(omit) }}"
+    delivery_policy: "{{ sns_topic.delivery_policy | default(omit) }}"
+  register: sns_create
+
+
+- name: Add tags to topic
+  shell: aws sns tag-resource \
+    --resource-arn {{ sns_create.sns_topic.topic_arn }} \
+    --tags '{{ sns_topic.tags|default({})| combine(aws_default_tags)|dict2items(key_name='Key',value_name='Value') | to_json }}'
+  when: sns_topic.state is undefined or sns_topic.state == 'present'
+
+
+- name: Print Sns Create op
+  debug:
+    var: sns_create

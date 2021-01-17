@@ -1,0 +1,9 @@
+- hosts: aws-cluster
+  pre_tasks:
+  - name: Ansible Compatible Version
+    assert:
+      that: "{{ ansible_version.full is version('2.9','>=') }}"
+      msg: "Playbook not compatible with {{ ansible_version.full }}"
+  tasks:
+    - name: Get VPC Info
+      include_tasks: "{{ playbook_dir }}/roles/aws-vpc/tasks/_vpc_info.yml"

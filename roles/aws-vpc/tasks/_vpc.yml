@@ -1,0 +1,140 @@
+---
+- set_fact:
+    internal_vpc_region: "{{ vpc_conf.region }}"
+
+
+- name: Create VPC
+  ec2_vpc_net:
+    region: "{{ internal_vpc_region }}"
+    name: "{{ vpc_conf.name }}"
+    state: "{{ vpc_conf.state | default('present') }}"
+    tags: "{{ (vpc_conf.tags | default({})) | combine(aws_default_tags) }}"
+    cidr_block: "{{ vpc_conf.cidr_block }}"
+    dns_hostnames: "{{ vpc_conf.dns_hostnames | default('yes') }}"
+    dns_support: "{{ vpc_conf.dns_support | default('yes') }}"
+    multi_ok: "{{ vpc_conf.multi_ok | default('no') }}"
+    purge_cidrs: "{{ vpc_conf.purge_cidrs | default('no') }}"
+    tenancy: "{{ vpc_conf.tenancy | default('default') }}"
+  register: vpc_create_op
+
+- name: Print VPC result
+  debug:
+    var: vpc_create_op
+
+- name: Create Internet Gateway
+  ec2_vpc_igw:
+    region: "{{ internal_vpc_region }}"
+    state: "{{ vpc_conf.igw.state | default('present') }}"
+    tags: "{{ (vpc_conf.igw.tags | default({})) | combine(aws_default_tags) | combine({'Name': vpc_conf.igw.name}) }}"
+    vpc_id: "{{ vpc_create_op.vpc.id }}"
+  register: igw_create_op
+  when: vpc_conf.igw is defined
+
+- name: Print Internet Gateway Result
+  debug:
+    var: igw_create_op
+
+- name: Create Public Subnets
+  ec2_vpc_subnet:
+    region: "{{ internal_vpc_region }}"
+    az: "{{ item.az }}"
+    cidr: "{{ item.cidr }}"
+    ipv6_cidr: "{{ item.ipv6_cidr | default(omit) }}"
+    map_public: "{{ item.map_public | default('true') }}"
+    state:  "{{ item.state | default('present') }}"
+    tags: "{{ (item.tags | default({})) | combine(aws_default_tags) | combine({'Name': item.name}) }}"
+    vpc_id: "{{ vpc_create_op.vpc.id }}"
+  loop: "{{ vpc_conf.subnets.public }}"
+  register: public_subnet_create_op
+  
+- name: Print Public Subnet Result
+  debug:
+    var: public_subnet_create_op
+
+- name: Create Private Subnet
+  ec2_vpc_subnet:
+    region: "{{ internal_vpc_region }}"
+    az: "{{ item2.az }}"
+    cidr: "{{ item2.cidr }}"
+    ipv6_cidr: "{{ item2.ipv6_cidr | default(omit) }}"
+    map_public: "{{ item2.map_public | default(omit) }}"
+    state: "{{ item2.state | default('present') }}"
+    tags: "{{ (item2.tags | default({})) | combine(aws_default_tags) | combine({'Name':item2.name}) }}"
+    vpc_id: "{{ vpc_create_op.vpc.id }}"
+  loop: "{{ vpc_conf.subnets.private }}"
+  loop_control:
+    loop_var: item2
+  register: private_subnet_create_op
+
+- name: Print Private Subnet Results
+  debug:
+    var: private_subnet_create_op
+
+- name: Create Public Subnet Nat Gateway
+  ec2_vpc_nat_gateway:
+    state: "{{ item3.item.ngw.state | default('present') }}"
+    if_exist_do_not_create: "{{ true }}"
+    release_eip: "{{ item3.item.ngw.release_eip | default(true) }}"
+    wait: "{{ item3.item.ngw.wait | default('yes') }}"
+    region: "{{ internal_vpc_region }}"
+    subnet_id: "{{ item3.subnet.id }}"
+  loop: "{{ public_subnet_create_op.results| default([]) }}"
+  loop_control:
+    loop_var: item3
+  when: item3.item.ngw is defined
+  register: nat_gateway_create_op
+
+- name: Print Public Subnet Nat Gateway
+  debug:
+    var: nat_gateway_create_op
+
+- name: NAT Gateway Mapping
+  set_fact:
+    ngw_mapping: "{{ ngw_mapping| default({}) | combine({ item4.item3.item.ngw.name: item4.nat_gateway_id }) }}"
+  loop: "{{ nat_gateway_create_op.results }}"
+  loop_control:
+    loop_var: item4
+  when: item4.nat_gateway_id is defined
+  register: nat_gateway_mapping_create_op
+
+- name: Print NAT Gateway Mapping
+  debug:
+    var: ngw_mapping
+
+
+- name: Update NAT Gateway Tags
+  shell:
+    cmd: aws ec2 create-tags --resources {{ ngw_item.value }}  --tags Key=Name,Value={{ ngw_item.key }} {% for (k,v) in aws_default_tags.items() %} Key={{k}},Value={{v}} {% endfor %}
+  environment:
+    AWS_DEFAULT_REGION: "{{ internal_vpc_region }}"
+  loop: "{{ ngw_mapping | dict2items }}"
+  loop_control:
+    loop_var: ngw_item
+
+
+- name: Create Route Table
+  include_tasks: "{{ playbook_dir }}/roles/aws-vpc/tasks/_route_table.yml"
+  vars:
+    vpc_id: "{{ vpc_create_op.vpc.id }}"
+    igw_id: "{{ igw_create_op.gateway_id }}"
+    ngws: "{{ ngw_mapping }}"
+    route_conf: "{{ item }}"
+  loop: "{{ vpc_conf.route_tables | default([]) }}"
+
+- name: Create Egress Security Groups
+  include_tasks: "{{ playbook_dir }}/roles/aws-vpc/tasks/_sg.yml"
+  vars:
+    vpc_id: "{{ vpc_create_op.vpc.id }}"
+    sg_conf: "{{ sg }}"
+  loop: "{{ vpc_conf.security_groups.egress | default([]) }}"
+  loop_control:
+    loop_var: sg
+    
+- name: Create Ingress Security Groups
+  include_tasks: "{{ playbook_dir }}/roles/aws-vpc/tasks/_sg.yml"
+  vars:
+    vpc_id: "{{ vpc_create_op.vpc.id }}"
+    sg_conf: "{{ sg }}"
+  loop: "{{ vpc_conf.security_groups.ingress | default([]) }}"
+  loop_control:
+    loop_var: sg

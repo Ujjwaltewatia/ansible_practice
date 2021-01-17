@@ -1,0 +1,6 @@
+---
+- name: Create Ec2
+  include_tasks: "{{ playbook_dir }}/roles/aws-ec2/tasks/_ec2.yml"
+  vars:
+    ec2_conf: "{{ item }}"
+  loop: "{{ aws_ec2 }}"

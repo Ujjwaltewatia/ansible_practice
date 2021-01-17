@@ -1,0 +1,41 @@
+---
+- set_fact:
+    sg_rules: "{{ [] }}"
+  
+- name: Update sg_rules when no cidrip   
+  set_fact:
+    sg_rules: "{{ sg_rules| default([]) + [rule] }}"
+  loop: "{{ sg_conf.rules }}"
+  loop_control:
+    loop_var: rule
+  when: rule.cidr_ips is undefined
+
+- debug:
+    var: sg_conf
+
+- name: Create rules from cidr_ips
+  set_fact:
+    sg_rules: "{{ sg_rules|default([]) + [{'proto': rule.0.proto ,'ports': rule.0.ports ,'cidr_ip': rule.1 ,'rule_desc': rule.0.rule_desc |default('')}]  }}"
+  loop: "{{ sg_conf.rules| subelements('cidr_ips')| default([]) }}"
+  loop_control:
+    loop_var: rule
+
+- name: Print sg rules
+  debug:
+    var: sg_rules
+
+
+- name: Create Security Groups
+  ec2_group:
+    name: "{{ sg_conf.name }}"
+    region: "{{ internal_vpc_region }}"
+    description: "{{ sg_conf.description }}"
+    vpc_id: "{{ vpc_id }}"
+    rules: "{{ sg_rules | default([]) }}"
+    tags: "{{ sg_conf.tags | default({}) | combine(aws_default_tags) | combine({'Name':sg_conf.name}) }}"
+    state: "{{ sg_conf.state | default('present') }}"
+  register: sg_create_op
+
+- name: Print Sg create Op
+  debug:
+    var: sg_create_op

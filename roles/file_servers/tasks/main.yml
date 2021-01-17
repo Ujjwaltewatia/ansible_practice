@@ -1,0 +1,19 @@
+
+
+
+
+- name: Start httpd Centos
+  tags: httpd-service,centos
+  service:
+   name: httpd
+   state: started
+   enabled: yes
+
+- name: Copy default_html for site to server instance
+  tags: apache,httpd
+  copy:
+   src: default_site.html
+   dest: /var/www/html/index.html
+   owner: root
+   group: root
+   mode: 0644

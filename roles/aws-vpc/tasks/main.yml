@@ -1,0 +1,7 @@
+---
+- name: Create VPC
+  include_tasks: "{{ playbook_dir }}/roles/aws-vpc/tasks/_vpc.yml"
+  vars:
+    vpc_conf: "{{ item.value }}"
+  with_items: "{{ aws_vpc|dict2items }}"
+  

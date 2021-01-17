@@ -1,0 +1,9 @@
+---
+- hosts: aws-cluster
+  pre_tasks:
+    - name: Asserting a compatible Ansible Version
+      assert:
+        that: "{{ ansible_version.full is version('2.9', '>=') }}"
+        msg: "Ansible Version should be greater than or equal to {{ ansible_version.full }}"
+  roles:
+    - aws-vpc

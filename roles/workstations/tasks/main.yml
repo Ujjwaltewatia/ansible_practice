@@ -1,0 +1,17 @@
+  - name: change email Address for admin
+    tags: apache,httpd,Amazon,centos
+    lineinfile:
+     path: /etc/httpd/conf/httpd.conf
+     regex: "^ServerAdmin"
+     line: ServerAdmin ujjwaltewatia@gmail.com
+    when: ansible_distribution == "Amazon"
+    notify: restart_apache
+
+  - name: Install terraform
+    unarchive:
+     src: "{{ terraform_url }}"
+     dest: /usr/local/bin
+     remote_src: yes
+     mode: 0755
+     owner: root
+     group: root

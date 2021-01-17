@@ -1,0 +1,85 @@
+---
+#- set_fact:
+#  vpc_name: "{{ first_vpc_name }}"
+
+
+- set_fact:
+   internal_vpc_region: "{{ aws_vpc[vpc_name].region }}"
+
+- name: VPC Info
+  ec2_vpc_net_info:
+    region: "{{ internal_vpc_region }}"
+    filters:
+       "tag:Name": "{{ vpc_name }}"
+  register: vpc_info_op
+
+#- name: Print Vpc Info
+#  debug:
+#    var: vpc_info_op
+#
+- set_fact:
+    internal_vpc: "{{ vpc_info_op.vpcs[0] }}"
+
+
+
+- name: VPC Subnet Info
+  ec2_vpc_subnet_info:
+    region: "{{ internal_vpc_region }}"
+    filters:
+        vpc-id: "{{ internal_vpc.vpc_id }}"
+  register: vpc_subnet_info_list
+
+
+#- name: Print Subnet Info
+#  debug:
+#    var: vpc_subnet_info_list
+
+- set_fact:
+    internal_subnets: "{{ {} }}"
+
+- set_fact:
+    internal_subnets: "{{ internal_subnets | combine({ subnet.tags.Name:subnet})  }}"
+  loop: "{{ vpc_subnet_info_list.subnets }}"
+  loop_control:
+    loop_var: subnet
+
+#- name: Print Subnets 
+#  debug:
+#    var: internal_subnets
+
+
+- name: Security Group Info
+  ec2_group_info:
+    region: "{{ internal_vpc_region }}"
+    filters:
+      vpc-id: "{{ internal_vpc.vpc_id }}"
+  register: vpc_sg_info_list
+
+#- name: Print SG info
+#  debug:
+#    var: vpc_sg_info_list
+
+- set_fact:
+    internal_security_groups: "{{ {} }}"
+
+- set_fact:
+    internal_security_groups: "{{ internal_security_groups | combine({sg.group_name:sg }) }}"
+  loop: "{{ vpc_sg_info_list.security_groups }}"
+  loop_control:
+    loop_var: sg
+
+#- name: Print Security Groups 
+# debug:
+#   var: internal_security_groups
+
+- name: Complete VPC INFO
+  set_fact:
+    vpc_info:
+      vpc: "{{ internal_vpc }}"
+      subnet: "{{internal_subnets}}"
+      security_group: "{{internal_security_groups}}"
+      region: "{{ internal_vpc_region }}"
+
+- name: Print VPC INFO
+  debug:
+    var: vpc_info

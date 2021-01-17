@@ -1,0 +1,36 @@
+---
+- set_fact:
+    internal_security_groups: "{{ [] }}"
+
+- set_fact:
+    internal_security_groups: "{{ internal_security_groups + ec2_details.vpc_security_group_id }}"
+  when: ec2_details.vpc_security_group_id is defined 
+
+- set_fact:
+    internal_security_groups: "{{ internal_security_groups + ec2_details.security_groups }}"
+  when: ec2_details.security_groups is defined 
+
+- name: Create Ec2 Machine
+  ec2_instance:
+    detailed_monitoring: "{{ ec2_details.detailed_monitoring | default('no') }}"
+    instance_type: "{{ ec2_details.instance_type | default(omit) }}"
+    image_id: "{{ ec2_details.image }}"
+    security_groups: "{{ internal_security_groups }}"
+    instance_role: "{{ ec2_details.instance_role | default(omit) }}"
+    key_name: "{{ ec2_details.key_name |default(omit) }}"
+    network: "{{ ec2_details.network | default(omit) }}"
+    region: "{{ vpc_info.region }}"
+    state: "{{ ec2_details.state | default('present') }}"
+    tags: "{{ ec2_details.tags | default({}) | combine(aws_default_tags)   }}"
+    termination_protection: "{{ ec2_details.termination_protection | default('no') }}"
+    user_data: "{{ ec2_details.user_data | default(omit) }}"
+    volumes: "{{ ec2_details.volumes | default([{}]) }}"
+    vpc_subnet_id: "{{ vpc_info.subnet[ec2_details.subnet_name].subnet_id }}"
+    wait_timeout: "{{ ec2_details.wait | default(600) }}"
+  register: ec2_instance_create_op
+
+#test
+
+- name: Print Create OP
+  debug:
+    var: ec2_instance_create_op

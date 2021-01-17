@@ -1,0 +1,10 @@
+---
+- hosts:  aws-cluster
+  gather_facts: False
+  pre_tasks:
+    - name: Check Ansible Compatible Version
+      assert:
+        that: "{{ ansible_version.full is version(2.9,'>=') }}"
+        msg: "Ansible playbook version should be greater or equal to {{ ansible_version.full}}"
+  roles:
+    - aws-sns

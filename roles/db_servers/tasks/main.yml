@@ -1,0 +1,21 @@
+- name: Install update on Ubuntu
+  tags: always
+  apt:
+   upgrade: dist
+   update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install apache and Php Ubuntu
+  tags: apache,apache2,ubuntu,php
+  package:
+   name: 
+   - "{{ apache_package }}"
+   - "{{ php_package }}"
+    
+
+
+- name: Install mariadb
+  tags: mariadb,amazon
+  yum:
+   name: "{{ maria_db_package }}"
+   state: latest

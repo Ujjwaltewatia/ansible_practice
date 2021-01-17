@@ -1,0 +1,30 @@
+---
+- set_fact:
+    routes_gw: "{{ [] }}"
+
+- name: Update Gateway Name with Gateway id
+  set_fact:
+    routes_gw: "{{ [{'dest':item.dest,'gateway_id':igw_id }] if item['gateway_name'] is defined else [{'dest':item.dest,'gateway_id':ngws.get(item.get('natgateway_name',''),'')}] }}" 
+  loop: "{{ route_conf.routes }}"
+    
+- name: Print Gateway Name with Gateway id
+  debug:
+    var: routes_gw
+  
+
+  
+
+
+- name: Create Route Table
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ internal_vpc_region }}"
+    tags: "{{ (route_conf.tags | default({})) | combine(aws_default_tags) | combine({'Name':route_conf.name}) }}"
+    subnets: "{{ route_conf.subnets }}"
+    routes: "{{ routes_gw }}"
+    state: "{{ route_conf.state | default('present') }}"
+  register: rt_create_op
+
+- name: Print Route Tables
+  debug:
+    var: rt_create_op

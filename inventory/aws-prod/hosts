@@ -1,0 +1,8 @@
+[aws-cluster]
+aws
+
+[workstations]
+54.82.214.172 apache_package=httpd php_package=php mysql_package=mysql
+
+[db_servers]
+3.89.228.135
