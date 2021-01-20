@@ -1,0 +1,8 @@
+- hosts: aws-cluster
+  pre_tasks:
+    - name: Check Ansible Compatible Version
+      assert:
+        that: "{{ ansible_version.full is version(2.9,'>=')}}"
+        msg: "Playbook not compatible with {{ ansible_version.full }}"
+  roles:
+    - aws-alarm-rds
