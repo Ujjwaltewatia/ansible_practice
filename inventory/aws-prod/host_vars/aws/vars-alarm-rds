@@ -7,28 +7,28 @@ rds_default_statistic: Average
 rds_default_comparison: ">="
 
 aws_alarm_rds:
-    db_identifier_1:
+    db-identifier-1:
         alarms:
             - name: rds-db_identifier_1-CPU-utilization-80percent
               state: present
               metric: "CPUUtilization"
               warning_threshold: 80
               rds_alarms_region: us-east-1
-              DBInstanceIdentifier: db_identifier_1
+              DBInstanceIdentifier: db-identifier-1
 
             - name: rds-db_identifier_1-CPU-utilization-90percent
               state: present
               metric: "CPUUtilization"
               warning_threshold: 90
               rds_alarms_region: us-east-1
-              DBInstanceIdentifier: db_identifier_1
+              DBInstanceIdentifier: db-identifier-1
 
             - name: rds-db_identifier_1-MEMORY-utilization-80percent
               state: present
               metric: "CPUUtilization"
               warning_threshold: 80
               rds_alarms_region: us-east-1
-              DBInstanceIdentifier: db_identifier_1
+              DBInstanceIdentifier: db-identifier-1
 
 
             - name: rds-db_identifier_1-MEMORY-utilization-90percent
@@ -36,13 +36,13 @@ aws_alarm_rds:
               metric: "CPUUtilization"
               warning_threshold: 90
               rds_alarms_region: us-east-1
-              DBInstanceIdentifier: db_identifier_1
+              DBInstanceIdentifier: db-identifier-1
 
-    db_identifier_2:
+    db-identifier-2:
         - name: rds-db_identifier_2-MEMORY-utilization-80percent
               state: present
               metric: "CPUUtilization"
               warning_threshold: 80
               rds_alarms_region: us-east-1
-              DBInstanceIdentifier: db_identifier_2
+              DBInstanceIdentifier: db-identifier-2
         

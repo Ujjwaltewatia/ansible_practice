@@ -7,7 +7,7 @@
 
 
 - name: Create Alarm
-  include_tasks: "{{ playbook_dir }}/roles/aws-alarm-/tasks/_ec2.yml"
+  include_tasks: "{{ playbook_dir }}/roles/aws-alarm-rds/tasks/_alarm_rds.yml"
   vars:
     rds_alarm_conf: "{{ item.value }}"
   loop: "{{ aws_alarm_rds| dict2items }}"

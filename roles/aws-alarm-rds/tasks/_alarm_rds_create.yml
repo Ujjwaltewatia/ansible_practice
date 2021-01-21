@@ -9,8 +9,8 @@
     statistic: "{{ alarm_conf.statistic | default(rds_default_statistic)}}"
     comparison: "{{ alarm_conf.comparison | default(rds_default_comparison) }}"
     threshold: "{{  alarm_conf.warning_threshold  }}"
-    period: "{{ rds_alarms_period }}"
+    period: "{{ alarm_conf.period | default(rds_alarms_period) }}"
     evaluation_periods: "{{ rds_alarms_evaluation_periods }}"
-    unit: "Percent"
+    unit: "{{ alarm_conf.unit | default(rds_default_unit) }}"
     dimensions: {"DBInstanceIdentifier": "{{ alarm_conf.DBInstanceIdentifier }}"}
     alarm_actions: "{{ rds_alarms_common_action_list | union(alarm_conf.alarm_actions) }}"
