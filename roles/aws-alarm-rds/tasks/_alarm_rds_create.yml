@@ -1,16 +1,35 @@
-- name: Create RDS alarm
-  ec2_metric_alarm:
-    state: "{{ alarm_conf.state | default('present') }}"
-    region: "{{ alarm_conf.rds_alarms_region }}"
-    name: "{{ alarm_conf.name }}"
-    description: "{{ ' High '+  alarm_conf.metric+'( '+alarm_conf.warning_threshold+' )'  +' for ' + alarm_conf.DBInstanceIdentifier }}"
-    metric: "{{ alarm_conf.metric }}"
-    namespace: "AWS/RDS"
-    statistic: "{{ alarm_conf.statistic | default(rds_default_statistic)}}"
-    comparison: "{{ alarm_conf.comparison | default(rds_default_comparison) }}"
-    threshold: "{{  alarm_conf.warning_threshold  }}"
-    period: "{{ alarm_conf.period | default(rds_alarms_period) }}"
-    evaluation_periods: "{{ rds_alarms_evaluation_periods }}"
-    unit: "{{ alarm_conf.unit | default(rds_default_unit) }}"
-    dimensions: {"DBInstanceIdentifier": "{{ alarm_conf.DBInstanceIdentifier }}"}
-    alarm_actions: "{{ rds_alarms_common_action_list | union(alarm_conf.alarm_actions) }}"
+
+- name: Describe RDS Instance
+  shell: aws --region="{{ alarm_conf.rds_alarms_region }}" rds describe-db-instances -db-instance-identifier alarm_conf.DBInstanceIdentifier
+  register: rds_alarms_instance_details
+
+
+- set_fact:
+    memory_warning_threshold: "{{ (rds_alarms_instance_class[rds_alarms_instance_details.DBInstances.DBInstanceClass].memory | float) * 10000000 * (100 - alarm_config.warning_threshold ) }}"
+  when: alarm_conf.metric == 'FreeableMemory' 
+
+- set_fact:
+    storage_warning_threshold: "{{ (rds_alarms_instance_details.DBInstances.AllocatedStorage | float) * 10000000 * (100 - alarm_config.warning_threshold ) }}"
+  when: alarm_conf.metric == 'FreeStorageSpace' 
+
+
+
+- name: Create RDS CPU Alarm
+  include_tasks: "{{ playbook_dir }}/roles/aws-alarm-rds/tasks/_create_cpu_alarm.yml"
+  vars:
+    alarm_conf: "{{ alarm_config }}"
+  when: alarm_config.metric == 'CPUUtilization'
+
+- name: Create RDS MEMORY Alarm
+  include_tasks: "{{ playbook_dir }}/roles/aws-alarm-rds/tasks/_create_memory_alarm.yml"
+  vars:
+    alarm_conf: "{{ alarm_config }}"
+    memory_warning_threshold: "{{ memory_warning_threshold }}"
+  when: alarm_config.metric == 'FreeableMemory'
+
+- name: Create RDS STORAGE Alarm
+  include_tasks: "{{ playbook_dir }}/roles/aws-alarm-rds/tasks/_create_storage_alarm.yml"
+  vars:
+    alarm_conf: "{{ alarm_config }}"
+    storage_warning_threshold: "{{ storage_warning_threshold }}"
+  when: alarm_config.metric == 'FreeStorageSpace'

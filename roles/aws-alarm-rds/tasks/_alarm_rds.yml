@@ -1,7 +1,14 @@
 ---
 
+- name: Get VPC Info
+  include_tasks: "{{ playbook_dir }}/roles/aws-vpc/tasks/_vpc_info.yml"
+  vars:
+    vpc_name: "{{ ec2_conf.vpc_name }}"
+
+
+
 - name: Create Alarm
   include_tasks: "{{ playbook_dir }}/roles/aws-alarm-rds/tasks/_alarm_rds_create.yml"
   vars:
-    alarm_conf: "{{ item.value }}"
+    alarm_config: "{{ item.value }}"
   loop: "{{ rds_alarm_conf| default([]) }}"
