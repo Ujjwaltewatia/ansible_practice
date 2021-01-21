@@ -1,11 +1,6 @@
 ---
 # tasks file for aws-alarm-rds
 
-- name: Describe RDS Instance
-  shell: aws --region="{{ rds_alarms_region }}" rds describe-db-instances
-  register: rds_alarms_instance_details
-
-
 - name: Create Alarm
   include_tasks: "{{ playbook_dir }}/roles/aws-alarm-rds/tasks/_alarm_rds.yml"
   vars:

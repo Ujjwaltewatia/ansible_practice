@@ -13,10 +13,11 @@ aws_sns:
         topic2:
             display_name: RDS_CPU_utilisation2
             name: rds-cpu-utilisation2
-            state: absent
+            state: present
             region: us-east-1
             tags: {'Name':'rds-cpu-utilisation2'}
             subscriptions:
                 - endpoint: "ujjwaltewatia@gmail.com"
                   protocol: "email"
-            
+
+        
