@@ -9,10 +9,10 @@
     metric: "FreeStorageSpace"
     namespace: "AWS/RDS"
     statistic: "{{ alarm_conf.statistic | default(rds_default_statistic)}}"
-    comparison: "{{ alarm_conf.comparison | default('<=') }}"
+    comparison: "<="
     threshold: "{{  storage_warning_threshold  }}"
     period: "{{ alarm_conf.period | default(rds_alarms_period) }}"
     evaluation_periods: "{{ rds_alarms_evaluation_periods }}"
     unit: "Bytes"
     dimensions: {"DBInstanceIdentifier": "{{ alarm_conf.DBInstanceIdentifier }}"}
-    alarm_actions: "{{ rds_alarms_common_action_list }}"
+    alarm_actions: "{{ alarm_conf.alarm_actions | default(rds_alarms_common_action_list) }}"

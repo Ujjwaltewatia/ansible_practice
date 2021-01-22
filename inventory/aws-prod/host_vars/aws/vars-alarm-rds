@@ -8,46 +8,40 @@ rds_default_comparison: ">="
 
 aws_alarm_rds:
   alarms:
-    - name: rds-db_identifier_1-CPU-utilization-warning
+    - name: rds-db_identifier_1-CPU-utilization-WARNING
       state: present
       metric: "CPUUtilization"
       warning_threshold: 80
-      comparison: ">="
       rds_alarms_region: us-east-1
       DBInstanceIdentifier: db-identifier-1
-    - name: rds-db_identifier_1-CPU-utilization-critical
+    - name: rds-db_identifier_1-CPU-utilization-CRITICAL
       state: present
       metric: "CPUUtilization"
-      comparison: ">="
       warning_threshold: 90
       rds_alarms_region: us-east-1
       DBInstanceIdentifier: db-identifier-1
-    - name: rds-db_identifier_1-MEMORY-utilization-warning
+    - name: rds-db_identifier_1-MEMORY-utilization-WARNING
       state: present
       metric: "FreeableMemory"
-      comparison: "<="
       warning_threshold: 80
       rds_alarms_region: us-east-1
       DBInstanceIdentifier: db-identifier-1
-    - name: rds-db_identifier_1-MEMORY-utilization-critical
+    - name: rds-db_identifier_1-MEMORY-utilization-CRITICAL
       state: present
       metric: "FreeableMemory"
-      comparison: "<="
       warning_threshold: 90
       rds_alarms_region: us-east-1
       DBInstanceIdentifier: db-identifier-1
-    - name: rds-db_identifier_1-Storage-utilization-critical
+    - name: rds-db_identifier_1-Storage-utilization-CRITICAL
       state: present
       metric: "FreeStorageSpace"
-      comparison: "<="
       warning_threshold: 90
       rds_alarms_region: us-east-1
       DBInstanceIdentifier: db-identifier-1
-    - name: rds-db_identifier_2-CPU-utilization-80percent
+    - name: rds-db_identifier_2-CPU-utilization-WARNING
       state: present
       metric: "CPUUtilization"
       warning_threshold: 80
-      comparison: ">="
       rds_alarms_region: us-east-1
       DBInstanceIdentifier: db-identifier-2
       

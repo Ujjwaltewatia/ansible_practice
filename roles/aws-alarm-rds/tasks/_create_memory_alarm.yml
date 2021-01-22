@@ -9,7 +9,7 @@
     metric: "FreeableMemory"
     namespace: "AWS/RDS"
     statistic: "{{ alarm_conf.statistic | default(rds_default_statistic)}}"
-    comparison: "{{ alarm_conf.comparison | default('<=') }}"
+    comparison: "<="
     threshold: "{{  memory_warning_threshold  }}"
     period: "{{ alarm_conf.period | default(rds_alarms_period) }}"
     evaluation_periods: "{{ rds_alarms_evaluation_periods }}"

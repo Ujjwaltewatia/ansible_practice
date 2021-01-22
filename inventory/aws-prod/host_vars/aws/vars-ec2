@@ -2,10 +2,10 @@ aws_ec2:
     - vpc_name: "{{ first_vpc_name }}"
       instances:
         instance1:
-            state: absent
+            state: present
             image: ami-0c94855ba95c71c99
             instance_type: t2.micro
-            tags: {'Name': my-second-instance}
+            tags: {'Name': my-first-instance}
             subnet_name: "{{ first_vpc_name }}_1a_public"
             security_groups: ['security_group_ssh']
             name: my-second-instance
