@@ -1,0 +1,18 @@
+---
+
+- name: Create RDS CPU alarm
+  ec2_metric_alarm:
+    state: "{{ alarm_conf.state | default('present') }}"
+    region: "{{ Alarm_region }}"
+    name: "{{ 'RDS-'+DatabaseIdentifier+'-'+alarm_conf.alarm_type+'-'+alarm_conf.warning_threshold|string+'%-Used' }}"
+    description: "{{ ' High '+  alarm_conf.metric+'( '+alarm_conf.warning_threshold |string+'%)'  +' for ' + DatabaseIdentifier +' RDS Database' }}"
+    metric: "CPUUtilization"
+    namespace: "AWS/RDS"
+    statistic: "{{ rds_default_statistic }}"
+    comparison: ">="
+    threshold: "{{  alarm_conf.warning_threshold  }}"
+    period: "{{ rds_alarms_period }}"
+    evaluation_periods: "{{ rds_alarms_evaluation_periods }}"
+    unit: "Percent"
+    dimensions: {"DBInstanceIdentifier": "{{ DatabaseIdentifier }}"}
+    alarm_actions: "{{ alarm_conf.alarm_actions | default(rds_alarms_common_action_list) }}"

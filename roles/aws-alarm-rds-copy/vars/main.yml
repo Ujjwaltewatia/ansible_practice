@@ -1,0 +1,341 @@
+---
+# vars file for aws-alarm-rds
+
+rds_alarms_instance_class:
+  db.t1.micro:
+    cpu: 1
+    ecu: 1
+    memory: 0.615
+    ebs: "No"
+    network: Very Low
+
+  db.t2.micro:
+    cpu: 1
+    ecu: 'Variable'
+    memory: 1
+    ebs: "No"
+    network: Low
+  db.t2.small:
+    cpu: 1
+    ecu: 'Variable'
+    memory: 2
+    ebs: "No"
+    network: Low
+  db.t2.medium:
+    cpu: 2
+    ecu: 'Variable'
+    memory: 4
+    ebs: "No"
+    network: Moderate
+  db.t2.large:
+    cpu: 2
+    ecu: 'Variable'
+    memory: 8
+    ebs: "No"
+    network: Moderate
+  db.t2.xlarge:
+    cpu: 4
+    ecu: 'Variable'
+    memory: 16
+    ebs: "No"
+    network: Moderate
+  db.t2.2xlarge:
+    cpu: 8
+    ecu: 'Variable'
+    memory: 32
+    ebs: "No"
+    network: Moderate
+
+  db.t3.micro:
+    cpu: 2
+    ecu: 'Variable'
+    memory: 1
+    ebs: "1,536 Mbps"
+    network: Moderate
+  db.t3.small:
+    cpu: 2
+    ecu: 'Variable'
+    memory: 2
+    ebs: "1,536 Mbps"
+    network: 5 Gbps
+  db.t3.medium:
+    cpu: 2
+    ecu: 'Variable'
+    memory: 4
+    ebs: "1,536 Mbps"
+    network: 5 Gbps
+  db.t3.large:
+    cpu: 2
+    ecu: 'Variable'
+    memory: 8
+    ebs: "2,048 Mbps"
+    network: 5 Gbps
+  db.t3.xlarge:
+    cpu: 4
+    ecu: 'Variable'
+    memory: 16
+    ebs: "2,048 Mbps"
+    network: 5 Gbps
+  db.t3.2xlarge:
+    cpu: 8
+    ecu: 'Variable'
+    memory: 32
+    ebs: "2,048 Mbps"
+    network: 5 Gbps
+
+  db.m1.small:
+    cpu: 1
+    ecu: 1
+    memory: 1.7
+    ebs: "No"
+    network: Very Low
+
+  db.m2.xlarge:
+    cpu: 2
+    ecu: 6.5
+    memory: 17.1
+    ebs: "No"
+    network: Moderate
+  db.m2.2xlarge:
+    cpu: 4
+    ecu: 13
+    memory: 34.2
+    ebs: "500 Mbps"
+    network: Moderate
+  db.m2.4xlarge:
+    cpu: 8
+    ecu: 26
+    memory: 68.4
+    ebs: "1000 Mbps"
+    network: High
+
+  db.r3.large:
+    cpu: 2
+    ecu: 6.5
+    memory: 15.25
+    ebs: "No"
+    network: Moderate
+  db.r3.xlarge:
+    cpu: 4
+    ecu: 13
+    memory: 30.5
+    ebs: "500 Mbps"
+    network: Moderate
+  db.r3.2xlarge:
+    cpu: 8
+    ecu: 26
+    memory: 61
+    ebs: "1000 Mbps"
+    network: High
+  db.r3.4xlarge:
+    cpu: 16
+    ecu: 52
+    memory: 122
+    ebs: "2000 Mbps"
+    network: High
+  db.r3.8xlarge:
+    cpu: 32
+    ecu: 104
+    memory: 244
+    ebs: "No"
+    network: 10 Gbps
+
+  db.r4.large:
+    cpu: 2
+    ecu: 7
+    memory: 15.25
+    ebs: "425 Mbps"
+    network: 10 Gbps
+  db.r4.xlarge:
+    cpu: 4
+    ecu: 13.5
+    memory: 30.5
+    ebs: "850 Mbps"
+    network: 10 Gbps
+  db.r4.2xlarge:
+    cpu: 8
+    ecu: 27
+    memory: 61
+    ebs: "1,700 Mbps"
+    network: 10 Gbps
+  db.r4.4xlarge:
+    cpu: 16
+    ecu: 53
+    memory: 122
+    ebs: "3,500 Mbps"
+    network: 10 Gbps
+  db.r4.8xlarge:
+    cpu: 32
+    ecu: 99
+    memory: 244
+    ebs: "7,000 Mbps"
+    network: 10 Gbps
+  db.r4.16xlarge:
+    cpu: 64
+    ecu: 195
+    memory: 488
+    ebs: "14,000 Mbps"
+    network: 25 Gbps
+
+  db.r5.large:
+    cpu: 2
+    ecu: 10
+    memory: 16
+    ebs: "4,750 Mbps"
+    network: 10 Gbps
+  db.r5.xlarge:
+    cpu: 4
+    ecu: 19
+    memory: 32
+    ebs: "4,750 Mbps"
+    network: 10 Gbps
+  db.r5.2xlarge:
+    cpu: 8
+    ecu: 38
+    memory: 64
+    ebs: "4,750 Mbps"
+    network: 10 Gbps
+  db.r5.4xlarge:
+    cpu: 16
+    ecu: 71
+    memory: 128
+    ebs: "4,750 Mbps"
+    network: 10 Gbps
+  db.r5.8xlarge:
+    cpu: 32
+    ecu: 132
+    memory: 256
+    ebs: "6,800 Mbps"
+    network: 10 Gbps
+
+  db.m3.medium:
+    cpu: 1
+    ecu: 3
+    memory: 3.75
+    ebs: "No"
+    network: Moderate
+  db.m3.large:
+    cpu: 2
+    ecu: 6.5
+    memory: 7.5
+    ebs: "No"
+    network: Moderate
+  db.m3.xlarge:
+    cpu: 4
+    ecu: 13
+    memory: 15
+    ebs: "500 Mbps"
+    network: High
+  db.m3.2xlarge:
+    cpu: 8
+    ecu: 26
+    memory: 30
+    ebs: "1000 Mbps"
+    network: High
+
+  db.m4.large:
+    cpu: 2
+    ecu: 6.5
+    memory: 8
+    ebs: "450 Mbps"
+    network: Moderate
+  db.m4.xlarge:
+    cpu: 4
+    ecu: 13
+    memory: 16
+    ebs: "750 Mbps"
+    network: High
+  db.m4.2xlarge:
+    cpu: 8
+    ecu: 25.5
+    memory: 32
+    ebs: "1000 Mbps"
+    network: High
+  db.m4.4xlarge:
+    cpu: 16
+    ecu: 53.5
+    memory: 64
+    ebs: "2000 Mbps"
+    network: High
+  db.m4.10xlarge:
+    cpu: 40
+    ecu: 124.5
+    memory: 160
+    ebs: "4000 Mbps"
+    network: 10 Gbps
+
+
+  db.m5.large:
+    cpu: 2
+    ecu: 10
+    memory: 8
+    ebs: "4750 Mbps"
+    network: 10 Gbps
+  db.m5.xlarge:
+    cpu: 4
+    ecu: 15
+    memory: 16
+    ebs: "4750 Mbps"
+    network: 10 Gbps
+  db.m5.2xlarge:
+    cpu: 8
+    ecu: 31
+    memory: 32
+    ebs: "4750 Mbps"
+    network: 10 Gbps
+  db.m5.4xlarge:
+    cpu: 16
+    ecu: 61
+    memory: 64
+    ebs: "4750 Mbps"
+    network: 10 Gbps
+  db.m5.8xlarge:
+    cpu: 32
+    ecu: 131
+    memory: 128
+    ebs: "6800 Mbps"
+    network: 10 Gbps
+  db.m5.12xlarge:
+    cpu: 48
+    ecu: 173
+    memory: 192
+    ebs: "9500 Mbps"
+    network: 12 Gbps
+
+  db.m6g.large:
+    cpu: 2
+    ecu: "-"
+    memory: 8
+    ebs: "4750 Mbps"
+    network: 10 Gbps
+  db.m6g.xlarge:
+    cpu: 4
+    ecu: "-"
+    memory: 16
+    ebs: "4750 Mbps"
+    network: 10 Gbps
+  db.m6g.2xlarge:
+    cpu: 8
+    ecu: "-"
+    memory: 32
+    ebs: "4750 Mbps"
+    network: 10 Gbps
+  db.m6g.4xlarge:
+    cpu: 16
+    ecu: "-"
+    memory: 64
+    ebs: "6800 Mbps"
+    network: 10 Gbps
+  db.m6g.8xlarge:
+    cpu: 32
+    ecu: "-"
+    memory: 128
+    ebs: "9500 Mbps"
+    network: 12 Gbps
+
+  db.cr1.8xlarge:
+    cpu: 32
+    ecu: 88
+    memory: 244
+    ebs: "No"
+    network: 10 Gbps

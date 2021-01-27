@@ -1,0 +1,9 @@
+---
+# tasks file for aws-alarm-rds
+
+- name: Create Alarm (Main file)
+  include_tasks: "{{ playbook_dir }}/roles/aws-alarm-rds-copy/tasks/_alarm_rds.yml"
+  vars:
+    db_list: "{{ item.value }}"
+    alarm_region: "{{ item.key }}"
+  loop: "{{ database_instance | dict2items }}"

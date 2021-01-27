@@ -1,0 +1,18 @@
+---
+
+- name: Create RDS Storage alarm
+  ec2_metric_alarm:
+    state: "{{ alarm_conf.state | default('present') }}"
+    region: "{{ Alarm_region }}"
+    name: "{{ 'RDS-'+DatabaseIdentifier+'-'+alarm_conf.alarm_type+'-'+alarm_conf.warning_threshold|string+'%-Used' }}"
+    description: "{{ 'Disk space for '+ DatabaseIdentifier+' RDS Database '+ alarm_conf.warning_threshold |string +'% Used' }}"
+    metric: "FreeStorageSpace"
+    namespace: "AWS/RDS"
+    statistic: "{{ rds_default_statistic }}"
+    comparison: "<="
+    threshold: "{{  storage_warning_threshold  }}"
+    period: "{{ rds_alarms_period }}"
+    evaluation_periods: "{{ rds_alarms_evaluation_periods }}"
+    unit: "Bytes"
+    dimensions: {"DBInstanceIdentifier": "{{ DatabaseIdentifier }}"}
+    alarm_actions: "{{ rds_alarms_common_action_list }}"

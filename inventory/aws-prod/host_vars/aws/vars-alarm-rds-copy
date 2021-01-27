@@ -1,0 +1,49 @@
+
+rds_alarms_common_action_list: ["arn:aws:sns:us-east-1:166032887324:rds-cpu-utilisation"]
+rds_alarms_evaluation_periods: 3
+rds_alarms_period: 300
+rds_default_unit: "Percent"
+rds_default_statistic: Average
+rds_default_comparison: ">="
+
+
+# Just add Db identifier to list inside region and below mentioned alarm_type will be attached automatically
+
+database_instance:
+  us-east-1:
+    - db-identifier-1
+    - db-identifier-2
+
+
+aws_alarm_rds_copy:
+  - alarm_type: CPU-utilization-FIRST-warning
+    state: present
+    metric: "CPUUtilization"
+    warning_threshold: 80
+   
+  - alarm_type: CPU-utilization-CRITICAL-warning
+    state: present
+    metric: "CPUUtilization"
+    warning_threshold: 90
+    
+  - alarm_type: MEMORY-utilization-FIRST-warning
+    state: present
+    metric: "FreeableMemory"
+    warning_threshold: 80
+  
+  - alarm_type: MEMORY-utilization-CRITICAL-warning
+    state: present
+    metric: "FreeableMemory"
+    warning_threshold: 90
+    
+  - alarm_type: Storage-utilization-FIRST-warning
+    state: present
+    metric: "FreeStorageSpace"
+    warning_threshold: 80  
+  - alarm_type: Storage-utilization-CRITICAL-warning
+    state: present
+    metric: "FreeStorageSpace"
+    warning_threshold: 90
+    rds_alarms_region: us-east-1
+      
+    

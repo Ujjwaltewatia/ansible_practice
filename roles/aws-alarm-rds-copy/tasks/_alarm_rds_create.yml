@@ -1,0 +1,48 @@
+
+- name: Describe RDS Instance
+  shell: aws --region="{{ rds_region }}" rds describe-db-instances --db-instance-identifier "{{ database_identifier }}"
+  register: rds_instance_details
+
+
+- set_fact:
+    rds_alarms_instance_details: "{{ (rds_instance_details.stdout | from_json).DBInstances }}"
+
+- set_fact:
+    memory_threshold: "{{ (rds_alarms_instance_class[rds_alarms_instance_details[0].DBInstanceClass].memory | float) * 10000000 * (100 - alarm_config.warning_threshold ) }}"
+  when: alarm_config.metric == 'FreeableMemory'
+
+- set_fact:
+    storage_threshold: "{{ (rds_alarms_instance_details[0].AllocatedStorage | float) * 10000000 * (100 - alarm_config.warning_threshold ) }}"
+  when: alarm_config.metric == 'FreeStorageSpace' and 'MaxAllocatedStorage' not in rds_alarms_instance_details[0]
+
+- set_fact:
+    storage_threshold: "{{ (rds_alarms_instance_details[0].MaxAllocatedStorage | float) * 10000000 * (100 - alarm_config.warning_threshold ) }}"
+  when: alarm_config.metric == 'FreeStorageSpace' and 'MaxAllocatedStorage' in rds_alarms_instance_details[0]
+
+
+
+- name: Create RDS CPU Alarm
+  include_tasks: "{{ playbook_dir }}/roles/aws-alarm-rds-copy/tasks/_create_cpu_alarm.yml"
+  vars:
+    alarm_conf: "{{ alarm_config }}"
+    Alarm_region: "{{ rds_region }}"
+    DatabaseIdentifier: "{{ database_identifier }}"
+  when: alarm_config.metric == 'CPUUtilization'
+
+- name: Create RDS MEMORY Alarm
+  include_tasks: "{{ playbook_dir }}/roles/aws-alarm-rds-copy/tasks/_create_memory_alarm.yml"
+  vars:
+    alarm_conf: "{{ alarm_config }}"
+    Alarm_region: "{{ rds_region }}"
+    DatabaseIdentifier: "{{ database_identifier }}"
+    memory_warning_threshold: "{{ memory_threshold }}"
+  when: alarm_config.metric == 'FreeableMemory'
+
+- name: Create RDS STORAGE Alarm
+  include_tasks: "{{ playbook_dir }}/roles/aws-alarm-rds-copy/tasks/_create_storage_alarm.yml"
+  vars:
+    alarm_conf: "{{ alarm_config }}"
+    Alarm_region: "{{ rds_region }}"
+    DatabaseIdentifier: "{{ database_identifier }}"
+    storage_warning_threshold: "{{ storage_threshold }}"
+  when: alarm_config.metric == 'FreeStorageSpace'

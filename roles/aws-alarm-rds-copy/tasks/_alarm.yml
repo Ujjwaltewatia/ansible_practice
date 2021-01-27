@@ -1,0 +1,10 @@
+
+- name: Create RDS Alarm
+  include_tasks: "{{ playbook_dir }}/roles/aws-alarm-rds-copy/tasks/_alarm_rds_create.yml"
+  vars:
+    database_identifier: "{{ db_identifier }}"
+    rds_region: "{{ rds_alarm_region }}"
+    alarm_config: "{{ item3 }}"
+  loop: "{{ aws_alarm_rds_copy| default([]) }}"
+  loop_control:
+    loop_var: item3

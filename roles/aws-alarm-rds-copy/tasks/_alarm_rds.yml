@@ -1,0 +1,19 @@
+
+#- name: print var database_instance
+#   debug:
+#    var: db_list
+
+
+- set_fact:
+    region_alarm: "{{ alarm_region }}"
+
+
+- name: Create Alarm (_alarm_rds.yml file)
+  include_tasks: "{{ playbook_dir }}/roles/aws-alarm-rds-copy/tasks/_alarm.yml"
+  vars:
+    db_identifier: "{{ item2 }}"
+    rds_alarm_region: "{{ region_alarm }}"
+  loop: "{{ db_list| default([]) }}"
+  loop_control:
+    loop_var: item2
+  
