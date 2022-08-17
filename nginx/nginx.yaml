@@ -6,9 +6,13 @@
   gather_facts: true
   tasks:
     - name: "install epel release"
-      yum: name=epel-release
+      shell:
+        cmd: amazon-linux-extras install epel
     - name: "Install Nginx"
-      yum: name=nginx state=present
+      yum: 
+        name: nginx
+        state: present
+      
     - name: "Start Nginx"
       service:
         name: nginx
