@@ -6,3 +6,4 @@ aws
 
 [db_servers]
 3.89.228.135
+[nginx_machine]

@@ -1,0 +1,21 @@
+---
+- set_fact:
+    internal_security_groups: "{{ [] }}"
+
+- set_fact:
+    internal_security_groups: "{{ internal_security_groups + ec2_details.vpc_security_group_id }}"
+  when: ec2_details.vpc_security_group_id is defined 
+
+- set_fact:
+    internal_security_groups: "{{ internal_security_groups + ec2_details.security_groups }}"
+  when: ec2_details.security_groups is defined 
+
+- name: Install Nginx
+  apt: name=nginx state=latest
+  register: nginx_installed
+
+#test
+
+- name: Print Create OP
+  debug:
+    var: ec2_instance_create_op
